@@ -1,0 +1,58 @@
+# .gitignore
+.env
+*.pyc
+__pycache__/
+.vscode/
+.idea/
+.DS_Store
+node_modules/
+dist/
+build/
+# Node / JavaScript
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+dist/
+build/
+coverage/
+
+# Env / Config
+.env
+.env.local
+.env.*.local
+*.config.*
+# OS junk files
+.DS_Store
+Thumbs.db
+
+# Logs
+logs
+*.log
+logs/*.log
+
+# IDE / Editor
+.vscode/
+.idea/
+*.swp
+
+# Python (if you ever mix Python scripts)
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Mac folder metadata
+.AppleDouble
+.LSOverride
+
+# Compiled binaries
+*.out
+*.exe
+*.dll
+
+# Misc
+*.tmp
+*.cache
+
