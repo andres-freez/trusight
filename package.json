@@ -18,9 +18,11 @@
   "homepage": "https://github.com/andres-freez/trusight#readme",
   "description": "",
   "dependencies": {
+    "@google-cloud/bigquery": "^8.1.1",
     "@hubspot/api-client": "^13.4.0",
     "csv-parser": "^3.2.0",
     "csv-writer": "^1.6.0",
-    "dotenv": "^17.2.3"
+    "dotenv": "^17.2.3",
+    "puppeteer": "^24.32.1"
   }
 }

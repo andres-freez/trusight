@@ -1,5 +1,5 @@
-// export-contacts.js
-// Exports contacts with extra fields + associated company & deal IDs
+// export-companies.js
+// Exports companies with extra fields + associated contact IDs
 
 require('dotenv').config();
 const fs = require('fs');
@@ -19,36 +19,34 @@ console.log(`🔑 Using HubSpot account: ${HUBSPOT_ACCOUNT_ID || '(not set)'}`);
 
 const hubspotClient = new hubspot.Client({ accessToken: HUBSPOT_TOKEN });
 
-async function fetchAllContacts() {
+async function fetchAllCompanies() {
   const limit = 100;
   let after = undefined;
   const all = [];
 
-  // Add whatever fields you care about here
   const properties = [
-    'email',
-    'firstname',
-    'lastname',
-    'phone',
-    'jobtitle',
-    'lifecyclestage',
-    'hs_lead_status',
+    'name',
+    'domain',
+    'industry',
     'city',
     'state',
     'country',
+    'numberofemployees',
+    'annualrevenue',
+    'lifecyclestage',
     'createdate',
     'lastmodifieddate'
   ];
 
-  console.log('🚀 Fetching contacts with associations (companies, deals)...');
+  console.log('🚀 Fetching companies with associated contacts...');
 
   while (true) {
-    const res = await hubspotClient.crm.contacts.basicApi.getPage(
+    const res = await hubspotClient.crm.companies.basicApi.getPage(
       limit,
       after,
       properties,
       undefined,
-      ['companies', 'deals'] // associations
+      ['contacts'] // associations
     );
 
     all.push(...res.results);
@@ -58,75 +56,68 @@ async function fetchAllContacts() {
     console.log(`...fetched ${all.length} so far`);
   }
 
-  console.log(`✅ Finished fetching ${all.length} contacts`);
+  console.log(`✅ Finished fetching ${all.length} companies`);
 
   return all.map((c) => {
     const p = c.properties || {};
     const a = c.associations || {};
-
-    const companyIds =
-      a.companies?.results?.map((r) => r.id).filter(Boolean) || [];
-    const dealIds =
-      a.deals?.results?.map((r) => r.id).filter(Boolean) || [];
+    const contactIds =
+      a.contacts?.results?.map((r) => r.id).filter(Boolean) || [];
 
     return {
       id: c.id,
-      email: (p.email || '').toLowerCase(),
-      firstname: p.firstname || '',
-      lastname: p.lastname || '',
-      phone: p.phone || '',
-      jobtitle: p.jobtitle || '',
-      lifecyclestage: p.lifecyclestage || '',
-      hs_lead_status: p.hs_lead_status || '',
+      name: p.name || '',
+      domain: p.domain || '',
+      industry: p.industry || '',
       city: p.city || '',
       state: p.state || '',
       country: p.country || '',
+      numberofemployees: p.numberofemployees || '',
+      annualrevenue: p.annualrevenue || '',
+      lifecyclestage: p.lifecyclestage || '',
       createdate: p.createdate || '',
       lastmodifieddate: p.lastmodifieddate || '',
-      company_ids: companyIds.join('|'),
-      deal_ids: dealIds.join('|')
+      contact_ids: contactIds.join('|')
     };
   });
 }
 
 async function main() {
-  const contacts = await fetchAllContacts();
+  const companies = await fetchAllCompanies();
 
   const dataDir = path.join(__dirname, 'data');
   if (!fs.existsSync(dataDir)) {
     fs.mkdirSync(dataDir, { recursive: true });
   }
 
-  const outPath = path.join(dataDir, 'contacts_export.csv');
+  const outPath = path.join(dataDir, 'companies_export.csv');
 
   const csvWriter = createObjectCsvWriter({
     path: outPath,
     header: [
       { id: 'id', title: 'id' },
-      { id: 'email', title: 'email' },
-      { id: 'firstname', title: 'firstname' },
-      { id: 'lastname', title: 'lastname' },
-      { id: 'phone', title: 'phone' },
-      { id: 'jobtitle', title: 'jobtitle' },
-      { id: 'lifecyclestage', title: 'lifecyclestage' },
-      { id: 'hs_lead_status', title: 'hs_lead_status' },
+      { id: 'name', title: 'name' },
+      { id: 'domain', title: 'domain' },
+      { id: 'industry', title: 'industry' },
       { id: 'city', title: 'city' },
       { id: 'state', title: 'state' },
       { id: 'country', title: 'country' },
+      { id: 'numberofemployees', title: 'numberofemployees' },
+      { id: 'annualrevenue', title: 'annualrevenue' },
+      { id: 'lifecyclestage', title: 'lifecyclestage' },
       { id: 'createdate', title: 'createdate' },
       { id: 'lastmodifieddate', title: 'lastmodifieddate' },
-      { id: 'company_ids', title: 'company_ids' },
-      { id: 'deal_ids', title: 'deal_ids' }
+      { id: 'contact_ids', title: 'contact_ids' }
     ]
   });
 
-  await csvWriter.writeRecords(contacts);
-  console.log(`📁 Contacts export written to: ${outPath}`);
+  await csvWriter.writeRecords(companies);
+  console.log(`📁 Companies export written to: ${outPath}`);
 }
 
 main().catch((err) => {
   const body = err?.response?.body;
-  console.error('❌ Error exporting contacts');
+  console.error('❌ Error exporting companies');
   if (body) {
     console.error(JSON.stringify(body, null, 2));
   } else {
