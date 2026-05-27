@@ -2,6 +2,12 @@
 data/
 *.csv
 *.log
+*.xlsx
+
+# Python
+.venv/
+__pycache__/
+*.pyc
 
 # Secrets / keys
 *.pem
@@ -13,6 +19,9 @@ trusight-*.json
 # Node
 node_modules/
 .env
+
+# Editor
+.vscode/
 
 # OS junk
 .DS_Store

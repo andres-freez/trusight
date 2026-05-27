@@ -1,0 +1,73 @@
+# Unmerge Process configuration. No secrets here -- HUBSPOT_KEY_TS_SANDBOX
+# stays in .env. Edit values, do not hardcode them in scripts.
+
+# Date the name-only merge campaign ran. Used by analysis to decide whether
+# an engagement was created before or after the merge.
+merge_cutoff_date: "2026-04-30"
+
+# HubSpot API batch sizes (respect rate limits).
+batch_sizes:
+  contacts_per_page: 100
+  engagements_per_page: 100
+  property_history_per_page: 50
+  associations_per_page: 100
+
+# Output filenames (relative to unmerge_process/output/).
+outputs:
+  merged_contacts: merged_contacts.csv
+  engagements_for_merged: engagements_for_merged.csv
+  property_history: property_history.csv
+  associations: associations_export.csv
+  engagement_associations: engagement_associations_export.csv
+  audit_log_merges: audit_log_merges.csv
+  unmerge_candidates: unmerge_candidates.csv
+  unmerge_summary: unmerge_summary.csv
+
+# Identity properties tracked in property_history.csv.
+identity_properties:
+  - email
+  - firstname
+  - lastname
+  - phone
+  - company
+  - jobtitle
+  - hs_additional_emails
+
+# Engagement object types pulled by pull_engagements_for_merged.py.
+engagement_types:
+  - emails
+  - calls
+  - meetings
+  - notes
+  - tasks
+
+# CRM-object association types pulled by associations_export.py.
+# Output goes to outputs.associations.
+association_types:
+  - companies
+  - deals
+  - tickets
+
+# Engagement association types pulled by associations_export.py.
+# Output goes to outputs.engagement_associations so engagements stay
+# separated from CRM-object associations downstream.
+engagement_association_types:
+  - emails
+  - calls
+  - meetings
+
+# Classification thresholds applied by classify_separability.py.
+# A pair is CONFIDENT only if it clears all "confident_*" gates.
+# It falls to PROBABLE if it clears "probable_*" but not all confident gates.
+# Otherwise NOT_SEPARABLE.
+classification:
+  confident_min_attributable_engagements: 1
+  confident_require_recovered_email: true
+  probable_min_attributable_engagements: 1
+  probable_require_recovered_email: false
+  ambiguous_engagement_max_ratio: 0.5
+
+# Set true to limit pulls to a small slice for smoke-testing.
+test_mode:
+  enabled: false
+  max_primary_vids: 25

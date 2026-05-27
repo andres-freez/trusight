@@ -1,0 +1,14 @@
+defaultPortal: acesin_freezdigital
+portals:
+  - name: acesin_freezdigital
+    portalId: 8732531
+    env: prod
+    authType: personalaccesskey
+    auth:
+      tokenInfo:
+        accessToken: >-
+         {HUBSPOT_ACCOUNT_ID}
+        expiresAt: '2025-12-03T14:46:54.916Z'
+    accountType: STANDARD
+    personalAccessKey: >-
+      {HUBSPOT_PERSONAL_ACCESS_KEY}
